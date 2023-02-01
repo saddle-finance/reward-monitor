@@ -17,23 +17,23 @@ export async function handler(event) {
             { id: 2, name: 'Jane Doe' }
         ]
     };
+    const fileBody = JSON.stringify(fileContent);
 
     const params = {
         Bucket: BUCKET_NAME,
         Key: fileName,
-        Body: JSON.stringify(fileContent)
+        Body: fileBody
     };
 
     const response = {
         statusCode: 200,
-        body: JSON.stringify("Hello from Lambda and Github!"),
+        body: fileBody,
     }
 
-    await s3.upload(params).promise().then((data) => {
-        response.body = `Successfully saved JSON output to ${bucketName}/${fileName}`
-    }).catch((err) => {
+    // Upload to S3
+    await s3.upload(params).promise().catch((err) => {
         response.statusCode = 500;
-        response.body = `Failed to save JSON output to ${bucketName}/${fileName}. Error: ${err}`
+        response.body = `Failed to save JSON output to ${BUCKET_NAME}/${fileName}. Error: ${err}`
     });
 
     return response

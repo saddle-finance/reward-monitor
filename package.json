@@ -3,22 +3,24 @@
   "version": "1.0.0",
   "description": "Monitors any SDL rewards and alerts if necessary",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/saddle-finance/reward-monitor.git"
   },
-  "author": "",
+  "scripts": {
+    "build": "rm -rf dist && esbuild index.js --bundle --minify --sourcemap --platform=node --target=node18.13 --outdir=dist --external:aws-sdk"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/saddle-finance/reward-monitor/issues"
   },
   "homepage": "https://github.com/saddle-finance/reward-monitor#readme",
   "dependencies": {
-    "aws-sdk": "^2.1307.0",
     "pagerduty": "^0.0.3"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1307.0",
+    "esbuild": "^0.17.5"
   },
   "type": "module"
 }
