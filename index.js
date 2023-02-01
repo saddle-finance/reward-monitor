@@ -24,18 +24,17 @@ export async function handler(event) {
         Body: JSON.stringify(fileContent)
     };
 
-    s3.upload(params, function (err, data) {
-        if (err) {
-            console.error(err);
-            // S3 upload failed
-        } else {
-            console.log(`Successfully saved JSON output to ${bucketName}/${fileName}`);
-        }
-    });
-
     const response = {
         statusCode: 200,
         body: JSON.stringify("Hello from Lambda and Github!"),
     }
+
+    await s3.upload(params).promise().then((data) => {
+        response.body = `Successfully saved JSON output to ${bucketName}/${fileName}`
+    }).catch((err) => {
+        response.statusCode = 500;
+        response.body = `Failed to save JSON output to ${bucketName}/${fileName}. Error: ${err}`
+    });
+
     return response
 }
