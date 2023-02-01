@@ -8,7 +8,7 @@
     "url": "git+https://github.com/saddle-finance/reward-monitor.git"
   },
   "scripts": {
-    "build": "rm -rf dist && esbuild index.js --bundle --minify --sourcemap --platform=node --target=node18.13 --outdir=dist --external:aws-sdk"
+    "build": "rm -rf dist && esbuild index.js --bundle --minify --sourcemap --platform=node --target=node18.13 --outdir=dist --external:@aws-sdk"
   },
   "license": "MIT",
   "bugs": {
@@ -19,7 +19,7 @@
     "pagerduty": "^0.0.3"
   },
   "devDependencies": {
-    "aws-sdk": "^2.1307.0",
+    "@aws-sdk/client-s3": "^3.262.0",
     "esbuild": "^0.17.5"
   },
   "type": "module"

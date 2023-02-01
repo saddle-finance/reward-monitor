@@ -1,10 +1,10 @@
-import AWS from 'aws-sdk';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import PagerDuty from 'pagerduty';
 
 const BUCKET_NAME = "reward-monitor-bucket"
 
 export async function handler(event) {
-    const s3 = new AWS.S3();
+    const s3 = new S3Client();
     // const pd = new PagerDuty({
     //     serviceKey: process.env.PAGERDUTY_SERVICE_KEY
     // });
@@ -31,7 +31,7 @@ export async function handler(event) {
     }
 
     // Upload to S3
-    await s3.upload(params).promise().catch((err) => {
+    await s3.send(new PutObjectCommand(params)).catch((err) => {
         response.statusCode = 500;
         response.body = `Failed to save JSON output to ${BUCKET_NAME}/${fileName}. Error: ${err}`
     });
