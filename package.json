@@ -1,0 +1,23 @@
+{
+  "name": "reward-monitor",
+  "version": "1.0.0",
+  "description": "Monitors any SDL rewards and alerts if necessary",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saddle-finance/reward-monitor.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/saddle-finance/reward-monitor/issues"
+  },
+  "homepage": "https://github.com/saddle-finance/reward-monitor#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1307.0",
+    "pagerduty": "^0.0.3"
+  }
+}
