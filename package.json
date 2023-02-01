@@ -19,5 +19,6 @@
   "dependencies": {
     "aws-sdk": "^2.1307.0",
     "pagerduty": "^0.0.3"
-  }
+  },
+  "type": "module"
 }
