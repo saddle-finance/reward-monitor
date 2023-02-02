@@ -1,40 +1,51 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import PagerDuty from 'pagerduty';
-
-const BUCKET_NAME = "reward-monitor-bucket"
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+// import PagerDuty from 'pagerduty';
 
 export async function handler(event) {
-    const s3 = new S3Client();
+    // Create client objects
+    const ddbClient = new DynamoDBClient();
     // const pd = new PagerDuty({
     //     serviceKey: process.env.PAGERDUTY_SERVICE_KEY
     // });
 
-    const fileName = new Date().toISOString().slice(0, 10) + '.json';
+    // Determine the timestamp at the time of the run
+    // Used as PK in DynamoDB
+    const timestamp = new Date().getTime().toString();
 
-    const fileContent = {
-        data: [
-            { id: 1, name: 'John Doe' },
-            { id: 2, name: 'Jane Doe' }
-        ]
-    };
-    const fileBody = JSON.stringify(fileContent);
-
-    const params = {
-        Bucket: BUCKET_NAME,
-        Key: fileName,
-        Body: fileBody
-    };
+    // Build the params object for the DynamoDB PutItem command
+    const exampleParams = buildPutItemParams(
+        timestamp, 1, "0x1234567890", "Example Contract", "EXAMPLE", "0x1234567890", 1, 100, 100, 0
+    );
 
     const response = {
         statusCode: 200,
-        body: fileBody,
+        body: JSON.stringify(exampleParams),
     }
 
-    // Upload to S3
-    await s3.send(new PutObjectCommand(params)).catch((err) => {
+    // Save the data to DynamoDB
+    await ddbClient.send(new PutItemCommand(exampleParams)).catch((err) => {
         response.statusCode = 500;
-        response.body = `Failed to save JSON output to ${BUCKET_NAME}/${fileName}. Error: ${err}`
+        response.body = `Failed to save data to DynamoDB. Error: ${err}`
     });
 
+    // Return response
     return response
+}
+
+function buildPutItemParams(timestamp, chainId, contractAddress, contractName, tokenTicker, tokenAddress, ratePerSecond, currentBalance, runwayInSeconds, rewardDebt) {
+    return {
+        TableName: "RewardMonitorTable",
+        Item: {
+            Timestamp: { N: timestamp },
+            ChainId: { N: chainId },
+            ContractAddress: { S: contractAddress },
+            ContractName: { S: contractName },
+            RewardTokenTicker: { S: tokenTicker },
+            RewardTokenAddress: { S: tokenAddress },
+            RatePerSecond: { N: ratePerSecond },
+            CurrentBalance: { N: currentBalance },
+            RunwayInSeconds: { N: runwayInSeconds },
+            RewardDebt: { N: rewardDebt }
+        },
+    };
 }

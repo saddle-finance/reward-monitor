@@ -19,6 +19,7 @@
     "pagerduty": "^0.0.3"
   },
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.262.0",
     "@aws-sdk/client-s3": "^3.262.0",
     "esbuild": "^0.17.5"
   },
