@@ -1,16 +1,20 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 // import PagerDuty from 'pagerduty';
+
+const TABLE_NAME = "RewardMonitorTable";
 
 export async function handler(event) {
     // Create client objects
     const ddbClient = new DynamoDBClient();
+    const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
     // const pd = new PagerDuty({
     //     serviceKey: process.env.PAGERDUTY_SERVICE_KEY
     // });
 
     // Determine the timestamp at the time of the run
     // Used as PK in DynamoDB
-    const timestamp = new Date().getTime().toString();
+    const timestamp = new Date().getTime();
 
     // Build the params object for the DynamoDB PutItem command
     const exampleParams = buildPutItemParams(
@@ -23,7 +27,7 @@ export async function handler(event) {
     }
 
     // Save the data to DynamoDB
-    await ddbClient.send(new PutItemCommand(exampleParams)).catch((err) => {
+    await ddbDocClient.send(new PutCommand(exampleParams)).catch((err) => {
         response.statusCode = 500;
         response.body = `Failed to save data to DynamoDB. Error: ${err}`
     });
@@ -34,18 +38,18 @@ export async function handler(event) {
 
 function buildPutItemParams(timestamp, chainId, contractAddress, contractName, tokenTicker, tokenAddress, ratePerSecond, currentBalance, runwayInSeconds, rewardDebt) {
     return {
-        TableName: "RewardMonitorTable",
+        TableName: TABLE_NAME,
         Item: {
-            Timestamp: { N: timestamp },
-            ChainId: { N: chainId },
-            ContractAddress: { S: contractAddress },
-            ContractName: { S: contractName },
-            RewardTokenTicker: { S: tokenTicker },
-            RewardTokenAddress: { S: tokenAddress },
-            RatePerSecond: { N: ratePerSecond },
-            CurrentBalance: { N: currentBalance },
-            RunwayInSeconds: { N: runwayInSeconds },
-            RewardDebt: { N: rewardDebt }
+            Timestamp: timestamp,
+            ChainId: chainId,
+            ContractAddress: contractAddress,
+            ContractName: contractName,
+            RewardTokenTicker: tokenTicker,
+            RewardTokenAddress: tokenAddress,
+            RatePerSecond: ratePerSecond,
+            CurrentBalance: currentBalance,
+            RunwayInSeconds: runwayInSeconds,
+            RewardDebt: rewardDebt
         },
     };
 }
